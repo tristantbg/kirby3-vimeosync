@@ -12,12 +12,7 @@
     "require": {
         "getkirby/composer-installer": "^1.1",
         "vlucas/phpdotenv": "^2.4",
-        "vimeo/vimeo-api": "^3.0"
-    },
-    "autoload": {
-        "psr-4": {
-            "TristanB\\KirbyShopify\\": "src/"
-        }
+        "vimeo/vimeo-api": "^2.0"
     },
     "config": {
         "optimize-autoloader": true

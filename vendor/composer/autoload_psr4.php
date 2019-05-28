@@ -6,9 +6,8 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'TristanB\\KirbyShopify\\' => array($baseDir . '/src'),
+    'Vimeo\\' => array($vendorDir . '/vimeo/vimeo-api/src/Vimeo'),
     'Symfony\\Polyfill\\Ctype\\' => array($vendorDir . '/symfony/polyfill-ctype'),
-    'PHPShopify\\' => array($vendorDir . '/phpclassic/php-shopify/lib'),
     'Kirby\\' => array($vendorDir . '/getkirby/composer-installer/src'),
     'Dotenv\\' => array($vendorDir . '/vlucas/phpdotenv/src'),
 );

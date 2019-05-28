@@ -11,17 +11,13 @@ class ComposerStaticInit51346d900d350885f5a1f781973509a7
     );
 
     public static $prefixLengthsPsr4 = array (
-        'T' => 
+        'V' => 
         array (
-            'TristanB\\KirbyShopify\\' => 22,
+            'Vimeo\\' => 6,
         ),
         'S' => 
         array (
             'Symfony\\Polyfill\\Ctype\\' => 23,
-        ),
-        'P' => 
-        array (
-            'PHPShopify\\' => 11,
         ),
         'K' => 
         array (
@@ -34,17 +30,13 @@ class ComposerStaticInit51346d900d350885f5a1f781973509a7
     );
 
     public static $prefixDirsPsr4 = array (
-        'TristanB\\KirbyShopify\\' => 
+        'Vimeo\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/src',
+            0 => __DIR__ . '/..' . '/vimeo/vimeo-api/src/Vimeo',
         ),
         'Symfony\\Polyfill\\Ctype\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
-        ),
-        'PHPShopify\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/phpclassic/php-shopify/lib',
         ),
         'Kirby\\' => 
         array (
@@ -70,64 +62,11 @@ class ComposerStaticInit51346d900d350885f5a1f781973509a7
         'Kirby\\ComposerInstaller\\Installer' => __DIR__ . '/..' . '/getkirby/composer-installer/src/ComposerInstaller/Installer.php',
         'Kirby\\ComposerInstaller\\Plugin' => __DIR__ . '/..' . '/getkirby/composer-installer/src/ComposerInstaller/Plugin.php',
         'Kirby\\ComposerInstaller\\PluginInstaller' => __DIR__ . '/..' . '/getkirby/composer-installer/src/ComposerInstaller/PluginInstaller.php',
-        'PHPShopify\\AbandonedCheckout' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/AbandonedCheckout.php',
-        'PHPShopify\\ApplicationCharge' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/ApplicationCharge.php',
-        'PHPShopify\\Article' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Article.php',
-        'PHPShopify\\Asset' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Asset.php',
-        'PHPShopify\\AuthHelper' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/AuthHelper.php',
-        'PHPShopify\\Blog' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Blog.php',
-        'PHPShopify\\CarrierService' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/CarrierService.php',
-        'PHPShopify\\Collect' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Collect.php',
-        'PHPShopify\\Comment' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Comment.php',
-        'PHPShopify\\Country' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Country.php',
-        'PHPShopify\\CurlRequest' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/CurlRequest.php',
-        'PHPShopify\\CustomCollection' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/CustomCollection.php',
-        'PHPShopify\\Customer' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Customer.php',
-        'PHPShopify\\CustomerAddress' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/CustomerAddress.php',
-        'PHPShopify\\CustomerSavedSearch' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/CustomerSavedSearch.php',
-        'PHPShopify\\Discount' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Discount.php',
-        'PHPShopify\\DiscountCode' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/DiscountCode.php',
-        'PHPShopify\\Event' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Event.php',
-        'PHPShopify\\Exception\\ApiException' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Exception/ApiException.php',
-        'PHPShopify\\Exception\\CurlException' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Exception/CurlException.php',
-        'PHPShopify\\Exception\\SdkException' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Exception/SdkException.php',
-        'PHPShopify\\Fulfillment' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Fulfillment.php',
-        'PHPShopify\\FulfillmentEvent' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/FulfillmentEvent.php',
-        'PHPShopify\\FulfillmentService' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/FulfillmentService.php',
-        'PHPShopify\\GiftCard' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/GiftCard.php',
-        'PHPShopify\\HttpRequestJson' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/HttpRequestJson.php',
-        'PHPShopify\\InventoryItem' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/InventoryItem.php',
-        'PHPShopify\\InventoryLevel' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/InventoryLevel.php',
-        'PHPShopify\\Location' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Location.php',
-        'PHPShopify\\Metafield' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Metafield.php',
-        'PHPShopify\\Multipass' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Multipass.php',
-        'PHPShopify\\Order' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Order.php',
-        'PHPShopify\\OrderRisk' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/OrderRisk.php',
-        'PHPShopify\\Page' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Page.php',
-        'PHPShopify\\Policy' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Policy.php',
-        'PHPShopify\\PriceRule' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/PriceRule.php',
-        'PHPShopify\\Product' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Product.php',
-        'PHPShopify\\ProductImage' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/ProductImage.php',
-        'PHPShopify\\ProductListing' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/ProductListing.php',
-        'PHPShopify\\ProductVariant' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/ProductVariant.php',
-        'PHPShopify\\Province' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Province.php',
-        'PHPShopify\\RecurringApplicationCharge' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/RecurringApplicationCharge.php',
-        'PHPShopify\\Redirect' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Redirect.php',
-        'PHPShopify\\Refund' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Refund.php',
-        'PHPShopify\\Report' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Report.php',
-        'PHPShopify\\ScriptTag' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/ScriptTag.php',
-        'PHPShopify\\ShippingZone' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/ShippingZone.php',
-        'PHPShopify\\Shop' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Shop.php',
-        'PHPShopify\\ShopifyResource' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/ShopifyResource.php',
-        'PHPShopify\\ShopifySDK' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/ShopifySDK.php',
-        'PHPShopify\\SmartCollection' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/SmartCollection.php',
-        'PHPShopify\\Theme' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Theme.php',
-        'PHPShopify\\Transaction' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Transaction.php',
-        'PHPShopify\\UsageCharge' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/UsageCharge.php',
-        'PHPShopify\\User' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/User.php',
-        'PHPShopify\\Webhook' => __DIR__ . '/..' . '/phpclassic/php-shopify/lib/Webhook.php',
         'Symfony\\Polyfill\\Ctype\\Ctype' => __DIR__ . '/..' . '/symfony/polyfill-ctype/Ctype.php',
-        'TristanB\\KirbyShopify\\KirbyShopify' => __DIR__ . '/../..' . '/src/KirbyShopify.php',
+        'Vimeo\\Exceptions\\ExceptionInterface' => __DIR__ . '/..' . '/vimeo/vimeo-api/src/Vimeo/Exceptions/ExceptionInterface.php',
+        'Vimeo\\Exceptions\\VimeoRequestException' => __DIR__ . '/..' . '/vimeo/vimeo-api/src/Vimeo/Exceptions/VimeoRequestException.php',
+        'Vimeo\\Exceptions\\VimeoUploadException' => __DIR__ . '/..' . '/vimeo/vimeo-api/src/Vimeo/Exceptions/VimeoUploadException.php',
+        'Vimeo\\Vimeo' => __DIR__ . '/..' . '/vimeo/vimeo-api/src/Vimeo/Vimeo.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

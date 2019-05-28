@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b671fc9748021d842de40ed430ac3a24",
+    "content-hash": "1b8c700246a2379f6ca71ca46ce8ff63",
     "packages": [
         {
             "name": "getkirby/composer-installer",
@@ -45,63 +45,17 @@
             "time": "2019-02-11T20:27:36+00:00"
         },
         {
-            "name": "phpclassic/php-shopify",
-            "version": "v1.0.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/phpclassic/php-shopify.git",
-                "reference": "d3c7f3bdfed59dd4fdcd005cef80f7bfb5d4a6c3"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/phpclassic/php-shopify/zipball/d3c7f3bdfed59dd4fdcd005cef80f7bfb5d4a6c3",
-                "reference": "d3c7f3bdfed59dd4fdcd005cef80f7bfb5d4a6c3",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "php": ">=5.6"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^5.5"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "PHPShopify\\": "lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Tareq Mahmood",
-                    "email": "tareqtms@yahoo.com"
-                }
-            ],
-            "description": "PHP SDK for Shopify API",
-            "homepage": "https://github.com/phpclassic/php-shopify",
-            "keywords": [
-                "php",
-                "sdk",
-                "shopify"
-            ],
-            "time": "2018-08-28T07:56:43+00:00"
-        },
-        {
             "name": "symfony/polyfill-ctype",
-            "version": "v1.10.0",
+            "version": "v1.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-ctype.git",
-                "reference": "e3d826245268269cd66f8326bd8bc066687b4a19"
+                "reference": "82ebae02209c21113908c229e9883c419720738a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/e3d826245268269cd66f8326bd8bc066687b4a19",
-                "reference": "e3d826245268269cd66f8326bd8bc066687b4a19",
+                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/82ebae02209c21113908c229e9883c419720738a",
+                "reference": "82ebae02209c21113908c229e9883c419720738a",
                 "shasum": ""
             },
             "require": {
@@ -113,7 +67,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.9-dev"
+                    "dev-master": "1.11-dev"
                 }
             },
             "autoload": {
@@ -135,7 +89,7 @@
                 },
                 {
                     "name": "Gert de Pagter",
-                    "email": "backendtea@gmail.com"
+                    "email": "BackEndTea@gmail.com"
                 }
             ],
             "description": "Symfony polyfill for ctype functions",
@@ -146,7 +100,54 @@
                 "polyfill",
                 "portable"
             ],
-            "time": "2018-08-06T14:22:27+00:00"
+            "time": "2019-02-06T07:57:58+00:00"
+        },
+        {
+            "name": "vimeo/vimeo-api",
+            "version": "2.0.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vimeo/vimeo.php.git",
+                "reference": "fe9b1aa22036da8768111cfda1902b23e516460e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vimeo/vimeo.php/zipball/fe9b1aa22036da8768111cfda1902b23e516460e",
+                "reference": "fe9b1aa22036da8768111cfda1902b23e516460e",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "php-coveralls/php-coveralls": "^1.0",
+                "phpunit/phpunit": "^4.8 || ^6.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Vimeo\\": "src/Vimeo"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Vimeo",
+                    "homepage": "http://vimeo.com"
+                }
+            ],
+            "description": "Official PHP library for the Vimeo API.",
+            "homepage": "https://github.com/vimeo/vimeo.php",
+            "keywords": [
+                "video",
+                "vimeo"
+            ],
+            "time": "2018-08-27T13:36:11+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
