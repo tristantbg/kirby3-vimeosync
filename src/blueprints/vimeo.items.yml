@@ -1,8 +1,8 @@
-title: Products
+title: Vimeo
 
 sections:
   products:
-    headline: Products
+    headline: Vimeo videos
     type: pages
-    info: "{{ page.handle }}"
-    template: shopify.product
+    info: "{{ page.vimeoID }}"
+    template: vimeo.video

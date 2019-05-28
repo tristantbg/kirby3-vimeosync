@@ -1,92 +1,55 @@
-title: Product
-options:
-  delete: false
-  changeTitle: false
-  changeTemplate: false
-  changeSlug: false
-  changeStatus: false
+title: Vimeo Video
 sections:
-  shopify:
+  vimeo:
     type: fields
     fields:
-      test:
-        label: test
+      vimeoID:
+        label: Vimeo ID
         type: text
-      shopifyAvailable:
-        label: Available
-        type: toggle
-        disabled: true
-      shopifyTitle:
-        label: Title
-        type: text
-        disabled: true
-        width: 2/4
-      shopifyID:
-        label: ID
-        type: text
-        disabled: true
-        width: 1/4
-      shopifyHandle:
-        label: Handle
-        type: text
-        disabled: true
-        width: 1/4
-      shopifyCurrentPrice:
-        label: Price
+        width: 1/2
+      vimeoName:
+        label: Vimeo Name
         type: text
         disabled: true
         width: 1/2
-      shopifyFeaturedImage:
-        label: Featured
-        type: structure
-        disabled: true
-        fields:
-          src:
-            label: URL
-            type: url
-        width: 1/2
-      shopifyDescriptionHTML:
-        label: Description
+      cover:
+        label: Cover
+        type: files
+        multiple: false
+        layout: cards
+      vimeoDescription:
+        label: Vimeo Description
         type: textarea
         disabled: true
-      shopifyImages:
-        label: Images
-        type: structure
-        fields:
-          src:
-            label: URL
-            type: url
-        disabled: true
-      shopifyVariants:
-        label: Variants
-        type: structure
-        fields:
-          price:
-            label: Price
-            type: text
-          inventory_quantity:
-            label: Inventory
-            type: text
-          sku:
-            label: SKU
-            type: text
-        disabled: true
-      shopifyURL:
-        label: URL
+        width: 1/2
+      vimeoURL:
+        label: Vimeo URL
         type: url
         disabled: true
-      shopifyType:
-        label: Type
-        type: text
-        disabled: true
         width: 1/2
-      shopifyVendor:
-        label: Vendor
-        type: text
+      vimeoThumbnails:
+        label: Vimeo Thumbnails
+        type: structure
+        fields:
+          width:
+            type: number
+          height:
+            type: number
+          link:
+            type: url
         disabled: true
-        width: 1/2
-      shopifyTags:
-        label: Tags
-        type: tags
-        separator: ,
+      vimeoFiles:
+        label: Vimeo Files
+        type: structure
+        fields:
+          quality:
+            type: text
+          type:
+            type: text
+          width:
+            type: number
+          height:
+            type: number
+          link:
+            type: url
         disabled: true
