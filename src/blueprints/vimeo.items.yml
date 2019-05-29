@@ -1,8 +1,21 @@
 title: Vimeo
 
 sections:
-  products:
-    headline: Vimeo videos
+  download:
+    type: fields
+    fields:
+      vimeosync_getvideos:
+        type: janitor
+        label: Sync videos
+        progress: Syncing...
+        job: vimeosync_getvideos
+      vimeosync_getthumbnails:
+        type: janitor
+        label: Get thumbnails
+        progress: Syncing...
+        job: vimeosync_getthumbnails
+  vimeoItems:
+    headline: Videos
     type: pages
     info: "{{ page.vimeoID }}"
     template: vimeo.video

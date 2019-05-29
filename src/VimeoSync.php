@@ -34,11 +34,18 @@ class App
 
     }
 
+    public static function vimeoPages()
+    {
+
+        return site()->index()->filterBy('intendedTemplate', 'vimeo.video');
+
+    }
+
     public static function unlistVideos()
     {
 
-        foreach (site()->index()->filterBy('intendedTemplate', 'vimeo.video') as $key => $item) {
-            $item->update(['vimeoAvailable' => false]);
+        foreach (\VimeoSync\App::vimeoPages() as $key => $vimeoPage) {
+            $vimeoPage->update(['vimeoAvailable' => false]);
         }
 
     }
@@ -52,23 +59,50 @@ class App
 
     }
 
-    public static function getVideos()
+    public static function getVideos($uri = null)
     {
 
         if (!self::$lib) {
             \VimeoSync\App::init();
         }
 
-        \VimeoSync\App::unlistVideos();
+        // \VimeoSync\App::unlistVideos();
 
-        $response = self::$lib->request('/me/videos', ['fields' => 'uri,name,description,link,pictures,files', 'per_page' => 100], 'GET');
+        if ($uri) {
+          $response = self::$lib->request($uri, [], 'GET');
+        } else {
+          $response = self::$lib->request('/me/videos', ['fields' => 'uri,name,description,link,pictures,files', 'per_page' => 100], 'GET');
+        }
 
         foreach ($response['body']['data'] as $key => $vimeoItem) {
             \VimeoSync\App::writeInfos($vimeoItem);
         }
 
-        \VimeoSync\App::deleteUnusedVideos();
+        if ($nextPage = $response['body']['paging']['next']) {
+          \VimeoSync\App::getVideos($nextPage);
+        }
 
+        // sleep(1);
+
+        // \VimeoSync\App::getThumbnails();
+
+        return true;
+
+    }
+
+    public static function getThumbnails()
+    {
+
+        foreach (\VimeoSync\App::vimeoPages() as $key => $vimeoPage) {
+            $thumbs = $vimeoPage->vimeoThumbnails()->toStructure();
+            if ($thumbs->count() > 0) {
+                $url       = strtok($thumbs->last()->link(), '?');
+                $imagedata = file_get_contents($url);
+                \Kirby\Toolkit\F::write(kirby()->root('content') . '/' . $vimeoPage->diruri() . '/cover.jpg', $imagedata);
+            }
+        }
+
+        return true;
     }
 
     public static function writeInfos($vimeoItem)
@@ -76,6 +110,8 @@ class App
         if (!self::$lib) {
             \VimeoSync\App::init();
         }
+
+        kirby()->impersonate('kirby');
 
         if (is_string($vimeoItem)) {
             $response  = self::$lib->request($uri, ['fields' => 'uri,name,description,link,pictures,files', 'per_page' => 1], 'GET');
@@ -99,12 +135,6 @@ class App
         $vimeoPage = page(self::$vimeoPageContainer->id() . '/' . \Kirby\Toolkit\Str::slug($id));
 
         if ($vimeoPage) {
-
-            if (count($vimeoThumbnails) > 0) {
-                $url       = strtok(array_values(array_slice($vimeoThumbnails, -1))[0]['link'], '?');
-                $imagedata = file_get_contents($url);
-                \Kirby\Toolkit\F::write($vimeoPage->root() . '/cover.jpg', $imagedata);
-            }
 
             $vimeoPage->update([
                 'title'            => $vimeoItem['name'],
@@ -141,12 +171,6 @@ class App
                         'vimeoAvailable'   => 'true',
                     ],
                 ]);
-
-                if (count($vimeoThumbnails) > 0) {
-                    $url       = strtok(array_values(array_slice($vimeoThumbnails, -1))[0]['link'], '?');
-                    $imagedata = file_get_contents($url);
-                    \Kirby\Toolkit\F::write($vimeoPage->root() . '/cover.jpg', $imagedata);
-                }
 
             }
 
