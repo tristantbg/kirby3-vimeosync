@@ -6,6 +6,7 @@ sections:
       vimeoID:
         label: Vimeo ID
         type: text
+        disabled: true
         width: 1/2
       vimeoName:
         label: Vimeo Name
