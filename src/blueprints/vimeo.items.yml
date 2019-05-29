@@ -1,5 +1,10 @@
 title: Vimeo
-
+options:
+  delete: false
+  changeTitle: false
+  changeTemplate: false
+  changeSlug: false
+  changeStatus: false
 sections:
   download:
     type: fields
