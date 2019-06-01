@@ -37,4 +37,15 @@ Kirby::plugin('tristanb/kirby-vimeosync', [
         'pages/vimeo.items' => __DIR__ . '/src/blueprints/vimeo.items.yml',
         'pages/vimeo.video' => __DIR__ . '/src/blueprints/vimeo.video.yml',
     ],
+    'pageMethods' => [
+      'vimeoSD' => function(){
+        return $this->vimeoFiles()->toStructure()->filterBy('quality', 'sd');
+      },
+      'vimeoHD' => function(){
+        return $this->vimeoFiles()->toStructure()->filterBy('quality', 'hd');
+      },
+      'vimeoHls' => function(){
+        return $this->vimeoFiles()->toStructure()->filterBy('quality', 'hls');
+      }
+    ]
 ]);
