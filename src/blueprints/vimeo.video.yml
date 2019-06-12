@@ -3,14 +3,26 @@ sections:
   vimeo:
     type: fields
     fields:
+      vimeoName:
+        label: Vimeo Name
+        type: text
+        disabled: true
+        width: 1/2
       vimeoID:
         label: Vimeo ID
         type: text
         disabled: true
         width: 1/2
-      vimeoName:
-        label: Vimeo Name
-        type: text
+      vimeoCreatedTime:
+        label: Vimeo Created Time
+        type: date
+        time: true
+        disabled: true
+        width: 1/2
+      vimeoModifiedTime:
+        label: Vimeo Modified Time
+        type: date
+        time: true
         disabled: true
         width: 1/2
       cover:

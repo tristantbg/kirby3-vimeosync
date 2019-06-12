@@ -45,7 +45,8 @@ class App
     {
 
         foreach (\VimeoSync\App::vimeoPages() as $key => $vimeoPage) {
-            $vimeoPage->update(['vimeoAvailable' => false]);
+            // $vimeoPage->update(['vimeoAvailable' => false]);
+            $vimeoPage->changeStatus('unlisted');
         }
 
     }
@@ -53,50 +54,60 @@ class App
     public static function deleteUnusedVideos()
     {
 
-        echo site()->index()->filterBy('intendedTemplate', 'vimeo.video')->filter(function ($child) {
+        $unusedVideos = site()->index()->filterBy('intendedTemplate', 'vimeo.video')->filter(function ($child) {
             return $child->vimeoAvailable()->bool();
         });
 
+        foreach ($unusedVideos as $key => $vimeoPage) {
+          $vimeoPage->delete();
+        }
+
     }
 
-    public static function getVideos($uri = null)
+    public static function getVideos($uri = null, $options = null)
     {
 
         if (!self::$lib) {
             \VimeoSync\App::init();
         }
 
-        // \VimeoSync\App::unlistVideos();
+        \VimeoSync\App::unlistVideos();
 
         if ($uri) {
           $response = self::$lib->request($uri, [], 'GET');
         } else {
-          $response = self::$lib->request('/me/videos', ['fields' => 'uri,name,description,link,pictures,files', 'per_page' => 100], 'GET');
+          $response = self::$lib->request('/me/videos', ['fields' => 'uri,modified_time,created_time,name,description,link,pictures,files', 'per_page' => 100], 'GET');
         }
 
         foreach ($response['body']['data'] as $key => $vimeoItem) {
-            \VimeoSync\App::writeInfos($vimeoItem);
+            \VimeoSync\App::writeInfos($vimeoItem, $options);
         }
 
         if ($nextPage = $response['body']['paging']['next']) {
-          \VimeoSync\App::getVideos($nextPage);
+          \VimeoSync\App::getVideos($nextPage, $options);
         }
 
-        // sleep(1);
-
         // \VimeoSync\App::getThumbnails();
+
+        // \VimeoSync\App::deleteUnusedVideos();
 
         return true;
 
     }
 
-    public static function getThumbnails()
+    public static function getThumbnails($vimeoPage = null)
     {
 
-        foreach (\VimeoSync\App::vimeoPages() as $key => $vimeoPage) {
-            $thumbs = $vimeoPage->vimeoThumbnails()->toStructure();
-            if ($thumbs->count() > 0) {
-                $url       = strtok($thumbs->last()->link(), '?');
+        if ($vimeoPage) {
+          $videos = [$vimeoPage];
+        } else {
+          $videos = \VimeoSync\App::vimeoPages();
+        }
+
+        foreach ($videos as $key => $vimeoPage) {
+            $vimeoThumbnails = $vimeoPage->vimeoThumbnails()->toStructure();
+            if ($vimeoThumbnails->count() > 0) {
+                $url       = strtok($vimeoThumbnails->last()->link(), '?');
                 $imagedata = file_get_contents($url);
                 \Kirby\Toolkit\F::write(kirby()->root('content') . '/' . $vimeoPage->diruri() . '/cover.jpg', $imagedata);
             }
@@ -105,21 +116,26 @@ class App
         return true;
     }
 
-    public static function writeInfos($vimeoItem)
+    public static function writeInfos($vimeoItem, $options = null)
     {
         if (!self::$lib) {
             \VimeoSync\App::init();
         }
 
+        $defaultOptions = ['new_items' => false];
+        $options = $options ? array_merge($defaultOptions, $options) : $defaultOptions;
+
         kirby()->impersonate('kirby');
 
-        if (is_string($vimeoItem)) {
-            $response  = self::$lib->request($uri, ['fields' => 'uri,name,description,link,pictures,files', 'per_page' => 1], 'GET');
+        if ($vimeoItem && is_string($vimeoItem)) {
+            $response  = self::$lib->request($uri, ['fields' => 'uri,modified_time,created_time,name,description,link,pictures,files', 'per_page' => 1], 'GET');
             $vimeoItem = $response['body'];
         }
-        $id              = str_replace('/videos/', '', $vimeoItem['uri']);
-        $vimeoThumbnails = isset($vimeoItem['pictures']) ? $vimeoItem['pictures']['sizes'] : [];
-        $vimeoFiles      = isset($vimeoItem['files']) ? $vimeoItem['files'] : [];
+        $id                = str_replace('/videos/', '', $vimeoItem['uri']);
+        $vimeoThumbnails   = isset($vimeoItem['pictures']) ? $vimeoItem['pictures']['sizes'] : [];
+        $vimeoFiles        = isset($vimeoItem['files']) ? $vimeoItem['files'] : [];
+        $vimeoModifiedTime = date('Y-m-d H:i', strtotime($vimeoItem['modified_time']));
+        $vimeoCreatedTime  = date('Y-m-d H:i', strtotime($vimeoItem['created_time']));
 
         usort($vimeoThumbnails, function ($item1, $item2) {
             return $item1['width'] <=> $item2['width'];
@@ -136,41 +152,61 @@ class App
 
         if ($vimeoPage) {
 
-            $vimeoPage->update([
-                'title'            => $vimeoItem['name'],
-                'cover'            => '- cover.jpg',
-                'vimeoID'          => \Kirby\Toolkit\Str::slug($id),
-                'vimeoData'        => \Kirby\Data\Yaml::encode($vimeoItem),
-                'vimeoName'        => $vimeoItem['name'],
-                'vimeoDescription' => $vimeoItem['description'],
-                'vimeoURL'         => $vimeoItem['link'],
-                'vimeoThumbnails'  => \Kirby\Data\Yaml::encode($vimeoThumbnails),
-                'vimeoFiles'       => \Kirby\Data\Yaml::encode($vimeoFiles),
-                'vimeoAvailable'   => 'true',
-            ]);
+            if ($vimeoPage->vimeoModifiedTime() != $vimeoModifiedTime || $vimeoPage->cover()->empty()) {
+
+              $vimeoPage->update([
+                  'title'             => $vimeoItem['name'],
+                  'cover'             => '- cover.jpg',
+                  'vimeoID'           => \Kirby\Toolkit\Str::slug($id),
+                  'vimeoData'         => \Kirby\Data\Yaml::encode($vimeoItem),
+                  'vimeoCreatedTime'  => $vimeoCreatedTime,
+                  'vimeoModifiedTime' => $vimeoModifiedTime,
+                  'vimeoName'         => $vimeoItem['name'],
+                  'vimeoDescription'  => $vimeoItem['description'],
+                  'vimeoURL'          => $vimeoItem['link'],
+                  'vimeoThumbnails'   => \Kirby\Data\Yaml::encode($vimeoThumbnails),
+                  'vimeoFiles'        => \Kirby\Data\Yaml::encode($vimeoFiles),
+                  'vimeoAvailable'    => 'true',
+              ]);
+
+              $vimeoPage->changeStatus('unlisted');
+
+              \VimeoSync\App::getThumbnails($vimeoPage);
+
+            }
 
         } else {
 
             if (self::$vimeoPageContainer) {
 
-                $vimeoPage = self::$vimeoPageContainer->createChild([
-                    'slug'     => \Kirby\Toolkit\Str::slug($id),
-                    'template' => 'vimeo.video',
-                    'draft'    => false,
-                    'listed'   => false,
-                    'content'  => [
-                        'title'            => $vimeoItem['name'],
-                        'cover'            => '- cover.jpg',
-                        'vimeoID'          => \Kirby\Toolkit\Str::slug($id),
-                        'vimeoData'        => \Kirby\Data\Yaml::encode($vimeoItem),
-                        'vimeoName'        => $vimeoItem['name'],
-                        'vimeoDescription' => $vimeoItem['description'],
-                        'vimeoURL'         => $vimeoItem['link'],
-                        'vimeoThumbnails'  => \Kirby\Data\Yaml::encode($vimeoThumbnails),
-                        'vimeoFiles'       => \Kirby\Data\Yaml::encode($vimeoFiles),
-                        'vimeoAvailable'   => 'true',
-                    ],
-                ]);
+                try {
+
+                  $vimeoPage = self::$vimeoPageContainer->createChild([
+                      'slug'     => \Kirby\Toolkit\Str::slug($id),
+                      'template' => 'vimeo.video',
+                      'draft'    => false,
+                      'listed'   => false,
+                      'content'  => [
+                          'title'              => $vimeoItem['name'],
+                          'cover'              => '- cover.jpg',
+                          'vimeoID'            => \Kirby\Toolkit\Str::slug($id),
+                          'vimeoData'          => \Kirby\Data\Yaml::encode($vimeoItem),
+                          'vimeoCreatedTime'   => $vimeoCreatedTime,
+                          'vimeoModifiedTime'  => $vimeoModifiedTime,
+                          'vimeoName'          => $vimeoItem['name'],
+                          'vimeoDescription'   => $vimeoItem['description'],
+                          'vimeoURL'           => $vimeoItem['link'],
+                          'vimeoThumbnails'    => \Kirby\Data\Yaml::encode($vimeoThumbnails),
+                          'vimeoFiles'         => \Kirby\Data\Yaml::encode($vimeoFiles),
+                          'vimeoAvailable'     => 'true',
+                      ],
+                  ]);
+
+                } catch (Exception $e) {
+
+                }
+
+                $vimeoPage->changeStatus('unlisted');
 
             }
 

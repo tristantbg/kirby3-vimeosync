@@ -19,8 +19,14 @@ sections:
         label: Get thumbnails
         progress: Syncing...
         job: vimeosync_getthumbnails
+      # vimeosync_getnewvideos:
+      #   type: janitor
+      #   label: Sync new videos
+      #   progress: Syncing...
+      #   job: vimeosync_getnewvideos
   vimeoItems:
     headline: Videos
     type: pages
     info: "{{ page.vimeoID }}"
     template: vimeo.video
+    sortBy: vimeoModifiedTime desc
