@@ -1,4 +1,6 @@
 title: Vimeo Video
+options:
+  changeSlug: false
 sections:
   vimeo:
     type: fields
