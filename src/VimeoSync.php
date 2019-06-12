@@ -43,8 +43,9 @@ class App
 
     public static function unlistVideos()
     {
+        $videos = \VimeoSync\App::vimeoPages();
 
-        foreach (\VimeoSync\App::vimeoPages() as $key => $vimeoPage) {
+        foreach ($videos as $key => $vimeoPage) {
             // $vimeoPage->update(['vimeoAvailable' => false]);
             $vimeoPage->changeStatus('unlisted');
         }
@@ -67,11 +68,12 @@ class App
     public static function getVideos($uri = null, $options = null)
     {
 
+        // \VimeoSync\App::unlistVideos();
+
         if (!self::$lib) {
             \VimeoSync\App::init();
         }
 
-        \VimeoSync\App::unlistVideos();
 
         if ($uri) {
           $response = self::$lib->request($uri, [], 'GET');
@@ -110,6 +112,9 @@ class App
                 $url       = strtok($vimeoThumbnails->last()->link(), '?');
                 $imagedata = file_get_contents($url);
                 \Kirby\Toolkit\F::write(kirby()->root('content') . '/' . $vimeoPage->diruri() . '/cover.jpg', $imagedata);
+                $vimeoPage->update([
+                  'cover'             => '- cover.jpg',
+              ]);
             }
         }
 
@@ -152,11 +157,12 @@ class App
 
         if ($vimeoPage) {
 
-            if ($vimeoPage->vimeoModifiedTime() != $vimeoModifiedTime || $vimeoPage->cover()->empty()) {
+            if ($vimeoPage->vimeoModifiedTime()->value() != $vimeoModifiedTime || $vimeoPage->cover()->empty()) {
+
+              \VimeoSync\App::getThumbnails($vimeoPage);
 
               $vimeoPage->update([
                   'title'             => $vimeoItem['name'],
-                  'cover'             => '- cover.jpg',
                   'vimeoID'           => \Kirby\Toolkit\Str::slug($id),
                   'vimeoData'         => \Kirby\Data\Yaml::encode($vimeoItem),
                   'vimeoCreatedTime'  => $vimeoCreatedTime,
@@ -169,11 +175,10 @@ class App
                   'vimeoAvailable'    => 'true',
               ]);
 
-              $vimeoPage->changeStatus('unlisted');
-
-              \VimeoSync\App::getThumbnails($vimeoPage);
 
             }
+
+            $vimeoPage->changeStatus('unlisted');
 
         } else {
 
@@ -201,6 +206,8 @@ class App
                           'vimeoAvailable'     => 'true',
                       ],
                   ]);
+
+                  \VimeoSync\App::getThumbnails($vimeoPage);
 
                 } catch (Exception $e) {
 

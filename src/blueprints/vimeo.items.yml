@@ -14,11 +14,11 @@ sections:
         label: Sync videos
         progress: Syncing...
         job: vimeosync_getvideos
-      vimeosync_getthumbnails:
-        type: janitor
-        label: Get thumbnails
-        progress: Syncing...
-        job: vimeosync_getthumbnails
+      # vimeosync_getthumbnails:
+      #   type: janitor
+      #   label: Get thumbnails
+      #   progress: Syncing...
+      #   job: vimeosync_getthumbnails
       # vimeosync_getnewvideos:
       #   type: janitor
       #   label: Sync new videos
