@@ -112,9 +112,11 @@ class App
                 $url       = strtok($vimeoThumbnails->last()->link(), '?');
                 $imagedata = file_get_contents($url);
                 \Kirby\Toolkit\F::write(kirby()->root('content') . '/' . $vimeoPage->diruri() . '/cover.jpg', $imagedata);
-                $vimeoPage->update([
-                  'cover'             => '- cover.jpg',
-              ]);
+                if($cover = $vimeoPage->file('cover.jpg')) {
+                  $vimeoPage->update([
+                    'cover' => $cover->id()
+                  ]);
+                }
             }
         }
 
