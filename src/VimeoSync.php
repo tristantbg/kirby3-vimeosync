@@ -141,8 +141,8 @@ class App
         $id                = str_replace('/videos/', '', $vimeoItem['uri']);
         $vimeoThumbnails   = isset($vimeoItem['pictures']) ? $vimeoItem['pictures']['sizes'] : [];
         $vimeoFiles        = isset($vimeoItem['files']) ? $vimeoItem['files'] : [];
-        $vimeoModifiedTime = date('Y-m-d H:i', strtotime($vimeoItem['modified_time']));
-        $vimeoCreatedTime  = date('Y-m-d H:i', strtotime($vimeoItem['created_time']));
+        $vimeoModifiedTime = strftime('%Y-%m-%d %H:%M', strtotime($vimeoItem['modified_time']));
+        $vimeoCreatedTime  = strftime('%Y-%m-%d %H:%M', strtotime($vimeoItem['created_time']));
 
         usort($vimeoThumbnails, function ($item1, $item2) {
             return $item1['width'] <=> $item2['width'];
@@ -193,7 +193,6 @@ class App
                       'listed'   => false,
                       'content'  => [
                           'title'              => $vimeoItem['name'],
-                          'cover'              => '- cover.jpg',
                           'vimeoID'            => \Kirby\Toolkit\Str::slug($id),
                           'vimeoData'          => \Kirby\Data\Yaml::encode($vimeoItem),
                           'vimeoCreatedTime'   => $vimeoCreatedTime,

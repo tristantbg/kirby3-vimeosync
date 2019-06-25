@@ -17,15 +17,13 @@ sections:
         width: 1/2
       vimeoCreatedTime:
         label: Vimeo Created Time
-        type: text
-        # type: date
+        type: date
         time: true
         disabled: true
         width: 1/2
       vimeoModifiedTime:
         label: Vimeo Modified Time
-        type: text
-        # type: date
+        type: date
         time: true
         disabled: true
         width: 1/2
