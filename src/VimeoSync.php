@@ -159,9 +159,7 @@ class App
 
         if ($vimeoPage) {
 
-            if ($vimeoPage->vimeoModifiedTime()->value() != $vimeoModifiedTime || $vimeoPage->cover()->empty()) {
-
-              \VimeoSync\App::getThumbnails($vimeoPage);
+            if ($vimeoPage->vimeoModifiedTime()->value() != $vimeoModifiedTime || !$vimeoPage->cover()->isNotEmpty()) {
 
               $vimeoPage->update([
                   'title'             => $vimeoItem['name'],
@@ -173,10 +171,10 @@ class App
                   'vimeoDescription'  => $vimeoItem['description'],
                   'vimeoURL'          => $vimeoItem['link'],
                   'vimeoThumbnails'   => \Kirby\Data\Yaml::encode($vimeoThumbnails),
-                  'vimeoFiles'        => \Kirby\Data\Yaml::encode($vimeoFiles),
-                  'vimeoAvailable'    => 'true',
+                  'vimeoFiles'        => \Kirby\Data\Yaml::encode($vimeoFiles)
               ]);
 
+              \VimeoSync\App::getThumbnails($vimeoPage);
 
             }
 
@@ -204,8 +202,7 @@ class App
                           'vimeoDescription'   => $vimeoItem['description'],
                           'vimeoURL'           => $vimeoItem['link'],
                           'vimeoThumbnails'    => \Kirby\Data\Yaml::encode($vimeoThumbnails),
-                          'vimeoFiles'         => \Kirby\Data\Yaml::encode($vimeoFiles),
-                          'vimeoAvailable'     => 'true',
+                          'vimeoFiles'         => \Kirby\Data\Yaml::encode($vimeoFiles)
                       ],
                   ]);
 
