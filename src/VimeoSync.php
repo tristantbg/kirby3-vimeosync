@@ -30,14 +30,14 @@ class App
         self::$lib = new \Vimeo\Vimeo(self::$config['client_id'], self::$config['client_secret']);
         self::$lib->setToken(self::$config['access_token']);
 
-        self::$vimeoPageContainer = site()->index()->filterBy('intendedTemplate', 'vimeo.items')->first();
+        self::$vimeoPageContainer = site()->pages()->filterBy('intendedTemplate', 'vimeo.items')->first();
 
     }
 
     public static function vimeoPages()
     {
 
-        return site()->index()->filterBy('intendedTemplate', 'vimeo.video');
+        return self::$vimeoPageContainer->children();
 
     }
 
