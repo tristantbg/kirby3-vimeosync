@@ -45,6 +45,8 @@ class App
     {
         $videos = \VimeoSync\App::vimeoPages();
 
+        kirby()->impersonate('kirby');
+
         foreach ($videos as $key => $vimeoPage) {
             // $vimeoPage->update(['vimeoAvailable' => false]);
             $vimeoPage->changeStatus('unlisted');
@@ -52,28 +54,28 @@ class App
 
     }
 
-    public static function deleteUnusedVideos()
+    public static function deleteUnusedVideos($ids = false)
     {
+        if ($ids) {
+          $videos = \VimeoSync\App::vimeoPages();
 
-        $unusedVideos = site()->index()->filterBy('intendedTemplate', 'vimeo.video')->filter(function ($child) {
-            return $child->vimeoAvailable()->bool();
-        });
-
-        foreach ($unusedVideos as $key => $vimeoPage) {
-          $vimeoPage->delete();
+          kirby()->impersonate('kirby');
+          foreach ($videos as $key => $video) {
+            if(!in_array($video->vimeoID(), $ids)) $video->delete();
+          }
         }
 
     }
 
-    public static function getVideos($uri = null, $options = null)
+    public static function getVideos($uri = null, $options = null, $ids = [])
     {
 
-        // \VimeoSync\App::unlistVideos();
 
         if (!self::$lib) {
             \VimeoSync\App::init();
         }
 
+        // \VimeoSync\App::unlistVideos();
 
         if ($uri) {
           $response = self::$lib->request($uri, [], 'GET');
@@ -83,15 +85,14 @@ class App
 
         foreach ($response['body']['data'] as $key => $vimeoItem) {
             \VimeoSync\App::writeInfos($vimeoItem, $options);
+            array_push($ids, \Kirby\Toolkit\Str::slug(str_replace('/videos/', '', $vimeoItem['uri'])));
         }
 
         if ($nextPage = $response['body']['paging']['next']) {
-          \VimeoSync\App::getVideos($nextPage, $options);
+          \VimeoSync\App::getVideos($nextPage, $options, $ids);
+        } else {
+          \VimeoSync\App::deleteUnusedVideos($ids);
         }
-
-        // \VimeoSync\App::getThumbnails();
-
-        // \VimeoSync\App::deleteUnusedVideos();
 
         return true;
 
