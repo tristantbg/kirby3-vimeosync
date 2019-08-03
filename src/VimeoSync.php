@@ -160,7 +160,7 @@ class App
 
         if ($vimeoPage) {
 
-            if ($vimeoPage->vimeoModifiedTime()->value() != $vimeoModifiedTime || !$vimeoPage->cover()->isNotEmpty()) {
+            if ($vimeoPage->vimeoModifiedTime()->value() != $vimeoModifiedTime || $vimeoPage->cover()->isEmpty() || $vimeoPage->vimeoFiles()->isEmpty()) {
 
               $vimeoPage->update([
                   'title'             => $vimeoItem['name'],
