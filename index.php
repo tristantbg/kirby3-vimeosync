@@ -37,6 +37,10 @@ Kirby::plugin('tristanb/kirby-vimeosync', [
         'pages/vimeo.items' => __DIR__ . '/src/blueprints/vimeo.items.yml',
         'pages/vimeo.video' => __DIR__ . '/src/blueprints/vimeo.video.yml',
     ],
+    'templates'  => [
+        'vimeo.items' => __DIR__ . '/src/templates/vimeo.items.php',
+        'vimeo.video' => __DIR__ . '/src/templates/vimeo.video.php',
+    ],
     'pageMethods' => [
         'vimeoSD'  => function () {
             return $this->vimeoFiles()->toStructure()->filterBy('quality', 'sd');
