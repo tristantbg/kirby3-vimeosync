@@ -37,6 +37,10 @@ class App
     public static function vimeoPages()
     {
 
+        if (!self::$vimeoPageContainer) {
+            \VimeoSync\App::init();
+        }
+
         return self::$vimeoPageContainer->children();
 
     }
@@ -162,24 +166,28 @@ class App
 
             if ($vimeoPage->vimeoModifiedTime()->value() != $vimeoModifiedTime || $vimeoPage->cover()->isEmpty() || $vimeoPage->vimeoFiles()->isEmpty()) {
 
-              $vimeoPage->update([
-                  'title'             => $vimeoItem['name'],
-                  'vimeoID'           => \Kirby\Toolkit\Str::slug($id),
-                  'vimeoData'         => \Kirby\Data\Yaml::encode($vimeoItem),
-                  'vimeoCreatedTime'  => $vimeoCreatedTime,
-                  'vimeoModifiedTime' => $vimeoModifiedTime,
-                  'vimeoName'         => $vimeoItem['name'],
-                  'vimeoDescription'  => $vimeoItem['description'],
-                  'vimeoURL'          => $vimeoItem['link'],
-                  'vimeoThumbnails'   => \Kirby\Data\Yaml::encode($vimeoThumbnails),
-                  'vimeoFiles'        => \Kirby\Data\Yaml::encode($vimeoFiles)
-              ]);
+              try {
 
-              \VimeoSync\App::getThumbnails($vimeoPage);
+                $vimeoPage->update([
+                    'title'             => $vimeoItem['name'],
+                    'cover'             => \Kirby\Data\Yaml::encode(['cover.jpg']),
+                    'vimeoID'           => \Kirby\Toolkit\Str::slug($id),
+                    'vimeoData'         => \Kirby\Data\Yaml::encode($vimeoItem),
+                    'vimeoCreatedTime'  => $vimeoCreatedTime,
+                    'vimeoModifiedTime' => $vimeoModifiedTime,
+                    'vimeoName'         => $vimeoItem['name'],
+                    'vimeoDescription'  => $vimeoItem['description'],
+                    'vimeoURL'          => $vimeoItem['link'],
+                    'vimeoThumbnails'   => \Kirby\Data\Yaml::encode($vimeoThumbnails),
+                    'vimeoFiles'        => \Kirby\Data\Yaml::encode($vimeoFiles)
+                ]);
+
+              } catch (Exception $e) {
+
+              }
+
 
             }
-
-            $vimeoPage->changeStatus('unlisted');
 
         } else {
 
@@ -194,6 +202,7 @@ class App
                       'listed'   => false,
                       'content'  => [
                           'title'              => $vimeoItem['name'],
+                          'cover'              => \Kirby\Data\Yaml::encode(['cover.jpg']),
                           'vimeoID'            => \Kirby\Toolkit\Str::slug($id),
                           'vimeoData'          => \Kirby\Data\Yaml::encode($vimeoItem),
                           'vimeoCreatedTime'   => $vimeoCreatedTime,
@@ -206,13 +215,9 @@ class App
                       ],
                   ]);
 
-                  \VimeoSync\App::getThumbnails($vimeoPage);
-
                 } catch (Exception $e) {
 
                 }
-
-                $vimeoPage->changeStatus('unlisted');
 
             }
 
