@@ -25,6 +25,7 @@ class App
             'client_id'     => $_ENV['CLIENT_ID'],
             'client_secret' => $_ENV['CLIENT_SECRET'],
             'access_token'  => $_ENV['ACCESS_TOKEN'],
+            'folder_id'     => !empty($_ENV['FOLDER_ID']) ? $_ENV['FOLDER_ID'] : null,
         ];
 
         self::$lib = new \Vimeo\Vimeo(self::$config['client_id'], self::$config['client_secret']);
@@ -84,7 +85,7 @@ class App
         if ($uri) {
           $response = self::$lib->request($uri, [], 'GET');
         } else {
-          $response = self::$lib->request('/me/videos', ['fields' => 'uri,modified_time,created_time,name,description,link,pictures,files', 'per_page' => 100], 'GET');
+          $response = self::$lib->request('/me/videos', ['fields' => 'uri,modified_time,created_time,name,description,link,pictures,files', 'folder_id' => self::$config['folder_id'], 'per_page' => 100], 'GET');
         }
 
         foreach ($response['body']['data'] as $key => $vimeoItem) {
