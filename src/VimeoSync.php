@@ -85,7 +85,11 @@ class App
         if ($uri) {
           $response = self::$lib->request($uri, [], 'GET');
         } else {
-          $response = self::$lib->request('/me/videos', ['fields' => 'uri,modified_time,created_time,name,description,link,pictures,files', 'folder_id' => self::$config['folder_id'], 'per_page' => 100], 'GET');
+          if (self::$config['folder_id']) {
+            $response = self::$lib->request('/me/projects/' . self::$config['folder_id'] . '/videos', ['fields' => 'uri,modified_time,created_time,name,description,link,pictures,files', 'per_page' => 100], 'GET');
+          } else {
+            $response = self::$lib->request('/me/videos', ['fields' => 'uri,modified_time,created_time,name,description,link,pictures,files', 'per_page' => 100], 'GET');
+          }
         }
 
         foreach ($response['body']['data'] as $key => $vimeoItem) {
