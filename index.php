@@ -53,19 +53,47 @@ Kirby::plugin('tristanb/kirby-vimeosync', [
         },
         'vimeoTag' => function ($options = array('')) {
 
-            $poster = $this->vimeoThumbnails()->isNotEmpty() ? $this->vimeoThumbnails()->toStructure()->last()->link() : '';
+            $vimeoPage = $this;
+
+            $thumbnails = $vimeoPage->vimeoThumbnails();
+
+            $thumbSD = $thumbnails->filter(function($thumb) use ($vimeoPage){
+              if ($vimeoSD = $vimeoPage->vimeoSD()->last()) {
+                return ($vimeoPage->vimeoSD()->last()->width()->int()/$vimeoPage->vimeoSD()->last()->height()->int()) == ($thumb->width()->int()/$thumb->height()->int());
+              } else {
+                return $thumb->width()->int() <= 640;
+              }
+            })->last();
+
+            $thumbHD = $thumbnails->filter(function($thumb) use ($vimeoPage){
+              if ($vimeoHD = $vimeoPage->vimeoHD()->last()) {
+                return ($vimeoPage->vimeoHD()->last()->width()->int()/$vimeoPage->vimeoHD()->last()->height()->int()) == ($thumb->width()->int()/$thumb->height()->int());
+              } else {
+                return $thumb->width()->int() > 640 && $thumb->width()->int() <= 960;
+              }
+            })->last();
+
+            if($vimeoPage->vimeoThumbnails()->isNotEmpty() && $thumbSD) {
+              $poster = $thumbSD->link();
+
+            } else if($vimeoPage->vimeoThumbnails()->isNotEmpty() && $thumbHD) {
+              $poster = $thumbHD->link();
+            }
             if (!empty($options['poster'])) {
                 $poster = $options['poster'];
             }
 
-            $videoContainerArgs = ['class' => 'player-container'];
+            if($cover = $vimeoPage->cover()->toFile()) $placeholder = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '. $cover->width() .' '. $cover->height() .'"%3E%3C/svg%3E';
+
+            $videoContainerArgs = ['class' => 'player-container', 'g-component' => 'VideoPlayer'];
             $videoSources       = [];
             $videoArgs          = [
-                'class'   => 'video-player',
-                'poster'  => $poster,
-                'width'   => '100%',
-                'height'  => 'auto',
-                'preload' => 'auto',
+                'class'       => 'video-player lazyload',
+                'poster' => isset($placeholder) ? $placeholder : $poster,
+                'data-poster' => $poster,
+                'width'       => '100%',
+                'height'      => 'auto',
+                'preload'     => 'none',
             ];
             if (!empty($options['class'])) {
                 $videoArgs['class'] .= ' ' . $options['class'];
@@ -95,18 +123,18 @@ Kirby::plugin('tristanb/kirby-vimeosync', [
                 $videoArgs['autoplay'] = true;
             }
 
-            if ($this->vimeoFiles()->isNotEmpty()) {
-                if ($hls = $this->vimeoHls()->first()) {
+            if ($vimeoPage->vimeoFiles()->isNotEmpty()) {
+                if ($hls = $vimeoPage->vimeoHls()->first()) {
                     $videoArgs['data-stream'] = $hls->link();
                 }
 
-                if ($this->vimeoHD()->last()) {
-                    $hd                   = $this->vimeoHD()->last()->link();
+                if ($vimeoPage->vimeoHD()->last()) {
+                    $hd                   = $vimeoPage->vimeoHD()->last()->link();
                     $videoArgs['data-hd'] = $hd;
                     $videoSources[]       = Html::tag('source', null, ['src' => $hd, 'type' => 'video/mp4']);
                 }
-                if ($this->vimeoSD()->last()) {
-                    $sd                   = $this->vimeoSD()->last()->link();
+                if ($vimeoPage->vimeoSD()->last()) {
+                    $sd                   = $vimeoPage->vimeoSD()->last()->link();
                     $videoArgs['data-sd'] = $sd;
                     if (!isset($hd)) {
                         $videoSources[] = Html::tag('source', null, ['src' => $sd, 'type' => 'video/mp4']);
