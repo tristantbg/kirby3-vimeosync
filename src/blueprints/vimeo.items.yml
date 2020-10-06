@@ -29,6 +29,6 @@ sections:
     type: pages
     info: "{{ page.vimeoID }}"
     template: vimeo.video
-    sortBy: vimeoModifiedTime desc
+    sortBy: vimeoID desc
     image:
       query: page.cover.toFile
