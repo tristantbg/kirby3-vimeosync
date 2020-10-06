@@ -25,13 +25,38 @@ class App
             'client_id'     => $_ENV['CLIENT_ID'],
             'client_secret' => $_ENV['CLIENT_SECRET'],
             'access_token'  => $_ENV['ACCESS_TOKEN'],
-            'folder_id'     => !empty($_ENV['FOLDER_ID']) ? $_ENV['FOLDER_ID'] : null,
         ];
 
         self::$lib = new \Vimeo\Vimeo(self::$config['client_id'], self::$config['client_secret']);
         self::$lib->setToken(self::$config['access_token']);
 
         self::$vimeoPageContainer = site()->pages()->filterBy('intendedTemplate', 'vimeo.items')->first();
+
+    }
+
+    public static function request($url) {
+
+      $curl = curl_init();
+
+      curl_setopt_array($curl, array(
+        CURLOPT_URL => "https://api.vimeo.com$url",
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "GET",
+        CURLOPT_HTTPHEADER => array(
+          "Authorization: Bearer " . self::$config['access_token']
+        ),
+      ));
+
+      $response = curl_exec($curl);
+
+      curl_close($curl);
+
+      return json_decode($response, true);
 
     }
 
@@ -83,22 +108,19 @@ class App
         // \VimeoSync\App::unlistVideos();
 
         if ($uri) {
-          $response = self::$lib->request($uri, [], 'GET');
+          // $response = self::$lib->request($uri, [], 'GET');
+          $response = \VimeoSync\App::request('$uri?fields=uri,modified_time,created_time,name,description,link,pictures,files&per_page=100');
         } else {
-          if (self::$config['folder_id']) {
-            $response = self::$lib->request('/me/projects/' . self::$config['folder_id'] . '/videos', ['fields' => 'uri,modified_time,created_time,name,description,link,pictures,files', 'per_page' => 100], 'GET');
-          } else {
-            $response = self::$lib->request('/me/videos', ['fields' => 'uri,modified_time,created_time,name,description,link,pictures,files', 'per_page' => 100], 'GET');
-          }
+          $response = \VimeoSync\App::request('/me/videos?fields=uri,modified_time,created_time,name,description,link,pictures,files&per_page=100');
         }
 
-        foreach ($response['body']['data'] as $key => $vimeoItem) {
+        foreach ($response['data'] as $key => $vimeoItem) {
             \VimeoSync\App::writeInfos($vimeoItem, $options);
             array_push($ids, \Kirby\Toolkit\Str::slug(str_replace('/videos/', '', $vimeoItem['uri'])));
         }
 
-        if ($nextPage = $response['body']['paging']['next']) {
-          \VimeoSync\App::getVideos($nextPage, $options, $ids);
+        if ($nextPage = $response['paging']['next']) {
+          // \VimeoSync\App::getVideos($nextPage, $options, $ids);
         } else {
           \VimeoSync\App::deleteUnusedVideos($ids);
         }
@@ -126,7 +148,28 @@ class App
                   $vimeoPage->update([
                     'cover' => $cover->id()
                   ]);
+                  // $imagedata = file_get_contents($cover->imgixUrl(['trim' => 'auto']));
+                  // \Kirby\Toolkit\F::write(kirby()->root('content') . '/' . $vimeoPage->diruri() . '/cover.jpg', $imagedata);
                 }
+            }
+        }
+
+        return true;
+    }
+
+    public static function trimThumbnails($vimeoPage = null)
+    {
+
+        if ($vimeoPage) {
+          $videos = [$vimeoPage];
+        } else {
+          $videos = \VimeoSync\App::vimeoPages();
+        }
+
+        foreach ($videos as $key => $vimeoPage) {
+            if($cover = $vimeoPage->file('cover.jpg')) {
+              $imagedata = file_get_contents($cover->imgixUrl(['trim' => 'auto']));
+              \Kirby\Toolkit\F::write(kirby()->root('content') . '/' . $vimeoPage->diruri() . '/cover.jpg', $imagedata);
             }
         }
 
@@ -145,8 +188,7 @@ class App
         kirby()->impersonate('kirby');
 
         if ($vimeoItem && is_string($vimeoItem)) {
-            $response  = self::$lib->request($uri, ['fields' => 'uri,modified_time,created_time,name,description,link,pictures,files', 'per_page' => 1], 'GET');
-            $vimeoItem = $response['body'];
+            $response  = \VimeoSync\App::request('$uri?fields=uri,modified_time,created_time,name,description,link,pictures,files&per_page=1');
         }
         $id                = str_replace('/videos/', '', $vimeoItem['uri']);
         $vimeoThumbnails   = isset($vimeoItem['pictures']) ? $vimeoItem['pictures']['sizes'] : [];
