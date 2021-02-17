@@ -55,7 +55,7 @@ Kirby::plugin('tristanb/kirby-vimeosync', [
 
             $vimeoPage = $this;
 
-            $thumbnails = $vimeoPage->vimeoThumbnails();
+            $thumbnails = $vimeoPage->vimeoThumbnails()->toStructure();
 
             $thumbSD = $thumbnails->filter(function($thumb) use ($vimeoPage){
               if ($vimeoSD = $vimeoPage->vimeoSD()->last()) {
@@ -74,16 +74,17 @@ Kirby::plugin('tristanb/kirby-vimeosync', [
             })->last();
 
             if($vimeoPage->vimeoThumbnails()->isNotEmpty() && $thumbSD) {
-              $poster = $thumbSD->link();
+              $poster = strtok($thumbSD->link(), '?');
 
             } else if($vimeoPage->vimeoThumbnails()->isNotEmpty() && $thumbHD) {
-              $poster = $thumbHD->link();
+              $poster = strtok($thumbHD->link(), '?');
             }
             if (!empty($options['poster'])) {
                 $poster = $options['poster'];
             }
 
             if($cover = $vimeoPage->cover()->toFile()) $placeholder = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '. $cover->width() .' '. $cover->height() .'"%3E%3C/svg%3E';
+            if(!empty($options['placeholder'])) $placeholder = $options['placeholder'];
 
             $videoContainerArgs = ['class' => 'player-container', 'g-component' => 'VideoPlayer'];
             $videoSources       = [];

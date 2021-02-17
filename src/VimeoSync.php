@@ -1,11 +1,12 @@
 <?php
 
+namespace VimeoSync;
+
 use Dotenv\Dotenv;
 use Kirby\Data\Yaml;
 use Kirby\Toolkit\Str;
 use Vimeo\Vimeo;
 
-namespace VimeoSync;
 
 // require 'helpers.php';
 
@@ -119,7 +120,29 @@ class App
         foreach ($videos as $key => $vimeoPage) {
             $vimeoThumbnails = $vimeoPage->vimeoThumbnails()->toStructure();
             if ($vimeoThumbnails->count() > 0) {
-                $url       = strtok($vimeoThumbnails->last()->link(), '?');
+
+                $thumbSD = $vimeoThumbnails->filter(function($thumb) use ($vimeoPage){
+                  if ($vimeoSD = $vimeoPage->vimeoSD()->last()) {
+                    return ($vimeoPage->vimeoSD()->last()->width()->int()/$vimeoPage->vimeoSD()->last()->height()->int()) == ($thumb->width()->int()/$thumb->height()->int());
+                  } else {
+                    return $thumb->width()->int() <= 640;
+                  }
+                })->last();
+
+                $thumbHD = $vimeoThumbnails->filter(function($thumb) use ($vimeoPage){
+                  if ($vimeoHD = $vimeoPage->vimeoHD()->last()) {
+                    return ($vimeoPage->vimeoHD()->last()->width()->int()/$vimeoPage->vimeoHD()->last()->height()->int()) == ($thumb->width()->int()/$thumb->height()->int());
+                  } else {
+                    return $thumb->width()->int() > 640 && $thumb->width()->int() <= 960;
+                  }
+                })->last();
+
+                if($thumbSD) {
+                  $url = strtok($thumbSD->link(), '?');
+                } else if($thumbHD) {
+                  $url = strtok($thumbHD->link(), '?');
+                }
+
                 $imagedata = file_get_contents($url);
                 \Kirby\Toolkit\F::write(kirby()->root('content') . '/' . $vimeoPage->diruri() . '/cover.jpg', $imagedata);
                 if($cover = $vimeoPage->file('cover.jpg')) {
