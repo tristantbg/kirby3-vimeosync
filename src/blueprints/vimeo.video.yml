@@ -32,6 +32,7 @@ sections:
         type: files
         multiple: false
         layout: cards
+        upload: false
       vimeoDescription:
         label: Vimeo Description
         type: textarea

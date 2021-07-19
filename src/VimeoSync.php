@@ -118,12 +118,12 @@ class App
         }
 
         foreach ($videos as $key => $vimeoPage) {
-            $vimeoThumbnails = $vimeoPage->vimeoThumbnails()->toStructure();
+            $vimeoThumbnails = $vimeoPage->vimeoThumbnails()->toStructure()->sortBy('width', 'asc');
             if ($vimeoThumbnails->count() > 0) {
 
                 $thumbSD = $vimeoThumbnails->filter(function($thumb) use ($vimeoPage){
                   if ($vimeoSD = $vimeoPage->vimeoSD()->last()) {
-                    return ($vimeoPage->vimeoSD()->last()->width()->int()/$vimeoPage->vimeoSD()->last()->height()->int()) == ($thumb->width()->int()/$thumb->height()->int());
+                    return round($vimeoSD->width()->int()/$vimeoSD->height()->int(), 2) == round($thumb->width()->int()/$thumb->height()->int(), 2);
                   } else {
                     return $thumb->width()->int() <= 640;
                   }
@@ -131,24 +131,34 @@ class App
 
                 $thumbHD = $vimeoThumbnails->filter(function($thumb) use ($vimeoPage){
                   if ($vimeoHD = $vimeoPage->vimeoHD()->last()) {
-                    return ($vimeoPage->vimeoHD()->last()->width()->int()/$vimeoPage->vimeoHD()->last()->height()->int()) == ($thumb->width()->int()/$thumb->height()->int());
+                    return round($vimeoHD->width()->int()/$vimeoHD->height()->int(), 2) == round($thumb->width()->int()/$thumb->height()->int(), 2);
                   } else {
-                    return $thumb->width()->int() > 640 && $thumb->width()->int() <= 960;
+                    return $thumb->width()->int() > 640 && $thumb->width()->int() <= 1280;
                   }
                 })->last();
+
+                $url = null;
 
                 if($thumbSD) {
                   $url = strtok($thumbSD->link(), '?');
                 } else if($thumbHD) {
                   $url = strtok($thumbHD->link(), '?');
+                } else {
+                  $video = $vimeoPage->vimeoHD()->last() ? $vimeoPage->vimeoHD()->last() : $vimeoPage->vimeoSD()->last();
+                  $url = strtok($vimeoThumbnails->last()->link(), '?');
+                  $url = explode('_', $url);
+                  $url = $url[0].'?w='. $video->width()->int() .'&h='.$video->height()->int().'&q=90';
                 }
 
-                $imagedata = file_get_contents($url);
-                \Kirby\Toolkit\F::write(kirby()->root('content') . '/' . $vimeoPage->diruri() . '/cover.jpg', $imagedata);
-                if($cover = $vimeoPage->file('cover.jpg')) {
-                  $vimeoPage->update([
-                    'cover' => $cover->id()
-                  ]);
+
+                if ($url) {
+                  $imagedata = file_get_contents($url);
+                  \Kirby\Toolkit\F::write(kirby()->root('content') . '/' . $vimeoPage->diruri() . '/cover.jpg', $imagedata);
+                  if($cover = $vimeoPage->file('cover.jpg')) {
+                    $vimeoPage->update([
+                      'cover' => $cover->id()
+                    ]);
+                  }
                 }
             }
         }

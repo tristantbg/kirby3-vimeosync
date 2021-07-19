@@ -86,12 +86,12 @@ Kirby::plugin('tristanb/kirby-vimeosync', [
             if($cover = $vimeoPage->cover()->toFile()) $placeholder = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '. $cover->width() .' '. $cover->height() .'"%3E%3C/svg%3E';
             if(!empty($options['placeholder'])) $placeholder = $options['placeholder'];
 
-            $videoContainerArgs = ['class' => 'player-container', 'g-component' => 'VideoPlayer'];
+            $videoContainerArgs = ['class' => 'player-container', 'g-component' => 'ResponsiveVideo'];
             $videoSources       = [];
             $videoArgs          = [
-                'class'       => 'video-player lazyload',
+                'class'       => 'video-player',
                 'poster' => isset($placeholder) ? $placeholder : $poster,
-                'data-poster' => $poster,
+                'data-poster' => isset($poster) ? $poster : null,
                 'width'       => '100%',
                 'height'      => 'auto',
                 'preload'     => 'none',
@@ -125,25 +125,36 @@ Kirby::plugin('tristanb/kirby-vimeosync', [
             }
 
             if ($vimeoPage->vimeoFiles()->isNotEmpty()) {
+              if ($options['stream'] !== false) {
                 if ($hls = $vimeoPage->vimeoHls()->first()) {
                     $videoArgs['data-stream'] = $hls->link();
                 }
+              }
 
-                if ($vimeoPage->vimeoHD()->last()) {
+              if ($options['hd'] !== false) {
+                  if ($vimeoPage->vimeoHD()->last()) {
                     $hd                   = $vimeoPage->vimeoHD()->last()->link();
                     $videoArgs['data-hd'] = $hd;
-                    $videoSources[]       = Html::tag('source', null, ['src' => $hd, 'type' => 'video/mp4']);
+                    // $videoSources[]       = Html::tag('source', null, ['src' => $hd, 'type' => 'video/mp4']);
+                  }
+              } else {
+                if ($vimeoPage->vimeoSD()->nth(2)) {
+                  $hd                   = $vimeoPage->vimeoSD()->nth(2)->link();
+                  $videoArgs['data-hd'] = $hd;
+                  // $videoSources[]       = Html::tag('source', null, ['src' => $hd, 'type' => 'video/mp4']);
                 }
-                if ($vimeoPage->vimeoSD()->last()) {
-                    $sd                   = $vimeoPage->vimeoSD()->last()->link();
-                    $videoArgs['data-sd'] = $sd;
-                    if (!isset($hd)) {
-                        $videoSources[] = Html::tag('source', null, ['src' => $sd, 'type' => 'video/mp4']);
-                    }
-                }
-            }
+              }
+              if ($vimeoPage->vimeoSD()->nth(1)) {
+                  $sd                   = $vimeoPage->vimeoSD()->nth(1)->link();
+                  $videoArgs['data-sd'] = $sd;
+                  if (!isset($hd)) {
+                      // $videoSources[] = Html::tag('source', null, ['src' => $sd, 'type' => 'video/mp4']);
+                  }
+              }
+          }
 
-            $video          = Html::tag('video', [implode('', $videoSources)], $videoArgs);
+            // $video          = Html::tag('video', [implode('', $videoSources)], $videoArgs);
+            $video          = Html::tag('video', [], $videoArgs);
             $videoContainer = Html::tag('div', [$video], $videoContainerArgs);
 
             return $videoContainer;
